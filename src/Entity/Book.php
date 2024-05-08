@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
@@ -29,6 +30,12 @@ class Book
      */
     #[ORM\OneToMany(targetEntity: Loan::class, mappedBy: 'book')]
     private Collection $loans;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $pageCount = null;
 
     public function __construct()
     {
@@ -102,6 +109,30 @@ class Book
                 $loan->setBook(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getPageCount(): ?int
+    {
+        return $this->pageCount;
+    }
+
+    public function setPageCount(?int $pageCount): static
+    {
+        $this->pageCount = $pageCount;
 
         return $this;
     }
