@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Book;
+use App\Entity\Genre;
 use App\Service\GenreService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -37,9 +38,9 @@ class GoogleBooksCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $subject = $input->getArgument('subject');
+
         $startIndex = 0;
         $maxResults = 40;
-
 
         $endpoint = sprintf('https://www.googleapis.com/books/v1/volumes?q=subject:%s&startIndex=%d&maxResults=%d', $subject, $startIndex, $maxResults);
 
@@ -54,27 +55,41 @@ class GoogleBooksCommand extends Command
 
         $books = $response->toArray();
 
-        foreach ($books['items'] as $item) {
+        $genres = [];
+
+        foreach ($books['items'] as $book) {
+            foreach ($book['volumeInfo']['categories'] as $category) {
+                $genres[] = $category;
+            }
+        }
+
+        foreach (array_unique($genres) as $genreName) {
+
+            $genre = $this->entityManager->getRepository(Genre::class)->findOneBy(['name' => $genreName]);
+
+            if (!$genre) {
+                $genre = new Genre();
+                $genre->setName($genreName);
+                $this->entityManager->persist($genre);
+            }
+        }
+
+        $this->entityManager->flush();
+
+        foreach ($books['items'] as $bookData) {
             $book = new Book();
-            $book->setTitle($item['volumeInfo']['title']);
-            if (isset($item['volumeInfo']['description'])) {
-                $book->setDescription($item['volumeInfo']['description']);
+            $book->setTitle($bookData['volumeInfo']['title']);
+            foreach ($bookData['volumeInfo']['authors'] as $author) {
+                $book->setAuthor($author);
             }
-            if (is_array($item['volumeInfo']['authors'])) {
-                foreach ($item['volumeInfo']['authors'] as $author) {
-                    $book->setAuthor($author);
-                }
-            } else {
-                $book->setAuthor($item['volumeInfo']['authors']);
-            }
-            $book->setPageCount($item['volumeInfo']['pageCount']);
+            $book->setPageCount($bookData['volumeInfo']['pageCount']);
+            $book->setGenre($this->entityManager->getRepository(Genre::class)->findOneBy(['name' => $bookData['volumeInfo']['categories'][0]]));
 
             $this->entityManager->persist($book);
         }
 
         $this->entityManager->flush();
 
-        $output->writeln('<info>Books created</info>');
         return Command::SUCCESS;
     }
 }
