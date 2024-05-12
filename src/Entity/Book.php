@@ -37,6 +37,9 @@ class Book
     #[ORM\Column(nullable: true)]
     private ?int $pageCount = null;
 
+    #[ORM\Column(type: Types::BLOB, nullable: true)]
+    private $image = null;
+
     public function __construct()
     {
         $this->loans = new ArrayCollection();
@@ -133,6 +136,18 @@ class Book
     public function setPageCount(?int $pageCount): static
     {
         $this->pageCount = $pageCount;
+
+        return $this;
+    }
+
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    public function setImage($image): static
+    {
+        $this->image = $image;
 
         return $this;
     }
