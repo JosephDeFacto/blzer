@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello BookController!{% endblock %}
+
+{% block body %}
+    <section class="text-gray-700 body-font overflow-hidden bg-white">
+        <div class="container px-5 py-24 mx-auto">
+            <div class="lg:w-4/5 mx-auto flex flex-wrap">
+                {% if book is defined %}
+                    <img alt="ecommerce" class="hover:scale-110 lg:w-1/2 w-full object-cover object-center rounded border border-gray-200" src="https://www.whitmorerarebooks.com/pictures/medium/2465.jpg">
+                    <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
+                        <h1 class="font-extrabold border title-font text-3xl text-gray-500 tracking-widest">{{ book.title }}</h1>
+                        <h1 class="text-gray-900 title-font font-medium mb-1 mt-5">by: {{ book.author }} <span class="text-sm text-gray-500">(author)</span></h1>
+                        <h2 class="font-extrabold title-font">Book Description</h2>
+                            {% if book.description is defined and book.description is not null %}
+                                <p class="leading-relaxed">{{ book.description }}</p>
+                            {% else %}
+                                <p class="leading-relaxed">No description.</p>
+                            {% endif %}
+                    </div>
+                {% else %}
+                    <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">Book does not exist.</h1>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
