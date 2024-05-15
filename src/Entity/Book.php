@@ -40,6 +40,7 @@ class Book
     #[ORM\Column(type: Types::BLOB, nullable: true)]
     private $image = null;
 
+
     public function __construct()
     {
         $this->loans = new ArrayCollection();
@@ -142,7 +143,12 @@ class Book
 
     public function getImage()
     {
-        return $this->image;
+        //return $this->image;
+        if ($this->image === null) {
+            return null;
+        }
+        return stream_get_contents($this->image);
+
     }
 
     public function setImage($image): static

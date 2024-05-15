@@ -45,6 +45,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Loan::class, mappedBy: 'user')]
     private Collection $loans;
 
+
     public function __construct()
     {
         $this->loans = new ArrayCollection();
