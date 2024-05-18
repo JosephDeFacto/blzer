@@ -17,18 +17,36 @@ class LoanFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('startDate', DateType::class, [])
-            ->add('endDate', DateType::class, [
+        $dt = new \DateTime();
 
+        $newDT = (clone $dt)->modify('+14 day');
+
+        $builder
+            ->add('startDate', DateType::class, [
+                'label' => 'Date of loan',
+                'disabled' => true,
+                'format' => 'dd-MM-yyyy',
+                'data' => $dt,
             ])
+            ->add('endDate', DateType::class, [
+                'attr' => ['class' => 'flex'],
+                'label' => 'Date of return',
+                'disabled' => true,
+                'format' => 'dd-MM-yyyy',
+                'data' => $newDT,
+            ])
+
             ->add('user', HiddenType::class, [
                 'data_class' => User::class,
             ])
+
             ->add('book', HiddenType::class, [
                 'data_class' => Book::class,
             ])
-            ->add('submit', SubmitType::class, [])
+            ->add('submit', SubmitType::class, [
+                'attr' => ['class' => 'flex flex-column items-center bg-white mt-5 hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow'],
+                'label' => 'Borrow',
+            ])
         ;
     }
 
