@@ -17,6 +17,15 @@
                             {% else %}
                                 <p class="leading-relaxed">No description.</p>
                             {% endif %}
+
+                            {{ form_start(form) }}
+                                {{ form_row(form.user) }}
+                                {{ form_row(form.book) }}
+                                {{ form_row(form.startDate) }}
+                                {{ form_row(form.endDate) }}
+                                {{ form_row(form.submit) }}
+                            {{ form_end(form) }}
+
                     </div>
                 {% else %}
                     <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">Book does not exist.</h1>
